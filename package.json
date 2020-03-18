@@ -1,0 +1,21 @@
+{
+  "name": "kcgburner",
+  "version": "1.0.0",
+  "description": "A simple webapp that scrapes data from KCG Student login and visualizes it",
+  "main": "dist/App.js",
+  "author": "xXAlphaManXx",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "express": "^4.17.1",
+    "puppeteer": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.3",
+    "@types/puppeteer": "^2.0.1",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "tsw": "tsc -w -p tsconfig.json"
+  }
+}
