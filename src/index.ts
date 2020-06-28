@@ -77,12 +77,12 @@ const scrape: Scrapper = async (username, password, semester) => {
 
         // Had to do this way to make typscript agree that the result is a string
         const studentDetails: Student = {
-            name: `${await page.$eval('#lblsname', e => e.innerText)}`,
-            roll: `${await page.$eval('#lblRegText', e => e.innerText)}`,
-            year: `${await page.$eval('#lblyear', e => e.innerText)}`,
-            image: `${await page.$eval('#Imagestudent', e => e.src)}`,
-            branch: `${await page.$eval('#lbldegree', e => e.innerText)}`,
-            semester: `${await page.$eval('#lblsem', e => e.innerText)}`
+            //@ts-ignore
+            name: `${await page.$eval('#lblsname', e => e.innerText)}`, roll: `${await page.$eval('#lblRegText', e => e.innerText)}`,
+            //@ts-ignore
+            year: `${await page.$eval('#lblyear', e => e.innerText)}`, image: `${await page.$eval('#Imagestudent', e => e.src)}`,
+            //@ts-ignore
+            branch: `${await page.$eval('#lbldegree', e => e.innerText)}`, semester: `${await page.$eval('#lblsem', e => e.innerText)}`
         };
 
         browser.close();
