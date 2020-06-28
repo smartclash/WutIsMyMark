@@ -10,6 +10,15 @@ interface SemesterMarkSheet extends Object {
     subjects: Subject[];
 }
 
+interface Student extends Object {
+    name: string;
+    roll: string;
+    year: string;
+    image: string;
+    branch: string;
+    semester: string;
+}
+
 /**
  * Scraps data off the website and returns an array
  * 
@@ -22,5 +31,5 @@ interface Scrapper {
         username: string,
         password: string,
         semester: number
-    ): Promise<SemesterMarkSheet>
+    )
 }

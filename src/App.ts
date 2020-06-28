@@ -2,11 +2,9 @@ import * as _ from 'lodash';
 import * as puppet from 'puppeteer';
 import {Tabletojson} from 'tabletojson';
 
-const cleanCurdeData = (json: any[]) => {
-    let cleanData: SemesterMarkSheet = {
-        semester: '',
-        headings: [],
-        subjects: []
+const cleanCurdeData = (json: any[]): SemesterMarkSheet => {
+    let cleanData: SemesterMarkSheet = { 
+        semester: '', headings: [], subjects: []
     };
 
     _.map(json[0], (crudeData, mainKey: number) => {
@@ -35,7 +33,6 @@ const cleanCurdeData = (json: any[]) => {
                 return cleanData.subjects[mainKey - 3].name = subject;
             }
 
-            console.log(subject);
             return cleanData.subjects[mainKey - 3].marks.push(subject);
         });
     });
@@ -82,13 +79,24 @@ const scrape: Scrapper = async (username, password, semester) => {
         const table2Json = Tabletojson.convert('<table>' + marksTableRaw + '</table>');
         const markDetails = getMarkDetails(table2Json);
 
-        browser.close();
-        return markDetails;
-    } catch {
-        return {
-            semester: '', headings: [], subjects: []
+        // Had to do this way to make typscript agree that the result is a string
+        const studentDetails: Student = {
+            name: `${await page.$eval('#lblsname', e => e.innerText)}`,
+            roll: `${await page.$eval('#lblRegText', e => e.innerText)}`,
+            year: `${await page.$eval('#lblyear', e => e.innerText)}`,
+            image: `${await page.$eval('#Imagestudent', e => e.src)}`,
+            branch: `${await page.$eval('#lbldegree', e => e.innerText)}`,
+            semester: `${await page.$eval('#lblsem', e => e.innerText)}`
         };
+
+        browser.close();
+        return [
+            studentDetails,
+            markDetails,
+        ];
+    } catch {
+        throw new Error('Could not login and get data');
     }
 };
 
-scrape('############', '########', 2).then(console.log);
+scrape('311019101017', '07122001', 2).then(console.log).catch(console.error);
