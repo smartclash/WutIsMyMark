@@ -1,9 +1,10 @@
 {
-    "include": [
-        "src/**/*.ts"
-    ],
-    "compilerOptions": {
-        "outDir": "dist"
-    },
-    "compileOnSave": true
+  "include": [
+    "src/**/*.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+  },
+  "compileOnSave": true
 }

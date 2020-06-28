@@ -1,84 +1,94 @@
-import * as fs from 'fs';
-import * as cheerio from 'cheerio';
+import * as _ from 'lodash';
 import * as puppet from 'puppeteer';
-import * as table2json from 'html-table-to-json';
+import {Tabletojson} from 'tabletojson';
 
-const scrape = async () => {
-    const browser = await puppet.launch({ headless: false });
-    const page = await browser.newPage();
+const cleanCurdeData = (json: any[]) => {
+    let cleanData: SemesterMarkSheet = {
+        semester: '',
+        headings: [],
+        subjects: []
+    };
 
-    await page.goto('http://103.249.82.132/studentlogin/');
+    _.map(json[0], (crudeData, mainKey: number) => {
+        let data = _.values(crudeData);
 
-    // await page.type('#txtuname', '############');
-    // await page.type('#txtpassword', '########');
+        if (mainKey === 2) {
+            return ;
+        }
 
-    await page.click('#Button1');
-    await page.waitFor(1000);
-    console.log('Logged In ->', page.url());
+        if (mainKey === 0) {
+            return cleanData.semester = data[0];
+        }
 
-    await page.click('#pHeadermarks');
-    await page.waitFor(200);
-    await page.click('#ImageButton1');
-    await page.waitFor(1000);
-    console.log('Clicked on marks button ->', page.url());
+        if (mainKey === 1) {
+            // TODO remove S.No field from headings
+            return cleanData.headings = data;
+        }
 
-    await page.click('#txt_vech');
-    await page.waitFor(100);
-    await page.click('#vehiclecheck');
-    await page.click('#btnmarkgo');
-    await page.waitFor(1000);
-    console.log('Got mark details ->', page.url());
+        _.map(data, (subject, subKey) => {
+            // TODO remove this whole S.No field. Can be done only after removing it from the headings
+            if (subKey === 0) {
+                return cleanData.subjects.push({ sno: subject, marks: [], name: '' })
+            }
 
+            if (subKey === 1) {
+                return cleanData.subjects[mainKey - 3].name = subject;
+            }
+
+            console.log(subject);
+            return cleanData.subjects[mainKey - 3].marks.push(subject);
+        });
+    });
+
+    return cleanData;
+};
+
+const getMarkDetails = (json: any[]): SemesterMarkSheet => {
+    return cleanCurdeData(json);
+};
+
+// const mockGetData = () => {
+//     const data = fs.readFileSync(join(__dirname, '../data.json')).toString();
+//     getMarkDetails(JSON.parse(data));
+// };
+
+const scrape: Scrapper = async (username, password, semester) => {
     try {
-        const marksTableRaw = await page.$eval('#Fpsmarks', elem => {
+        const browser = await puppet.launch();
+        const page = await browser.newPage();
+
+        await page.goto('http://103.249.82.130/student1/Default.aspx');
+
+        await page.type('#txtuname', username);
+        await page.type('#txtpassword', password);
+
+        await page.click('#Button1');
+        await page.waitFor(1000);
+
+        await page.click('#pHeadermarks');
+        await page.waitFor(200);
+        await page.click('#ImageButton1');
+        await page.waitFor(1000);
+
+        await page.click('#txt_vech');
+        await page.waitFor(100);
+        await page.click(`#vehiclechecklist_${semester - 1}`);
+        await page.click('#btnmarkgo');
+        await page.waitFor(1000);
+
+        const marksTableRaw = await page.$eval('table#Fpsmarks_viewport', elem => {
             return elem.innerHTML;
         });
-        getMarkDetails(cheerio.load(marksTableRaw));
-    } catch (_) {
-        //
+        const table2Json = Tabletojson.convert('<table>' + marksTableRaw + '</table>');
+        const markDetails = getMarkDetails(table2Json);
+
+        browser.close();
+        return markDetails;
+    } catch {
+        return {
+            semester: '', headings: [], subjects: []
+        };
     }
-
-    browser.close();
 };
 
-const getMarkDetails = ($: CheerioStatic) => {
-    // const semesterTitle = $('table#Fpsmarks_viewport')[0].children[2].children[0].children[1].children[0].data;
-    // const typesCollection = $('table#Fpsmarks_viewport')[0].children[2].children[1].children;
-    const table = table2json.parse($('table#Fpsmarks_viewport').html());
-    console.log(table.results);
-    // const allRows = $('table#Fpsmarks_viewport > tbody')[0].children;
-    // for(let i = 0; i <= allRows.length; i++) {
-    //     for (let j = 0; j <= allRows[i].children.length; j++) {
-    //         // console.log('-------allowed-------');
-    //         // console.log(allRows[i].children[j]);
-    //         console.log(allRows[i].children[j].children);
-    //     }
-    // }
-
-
-    // Works
-    // for(let i = 0; i <= typesCollection.length; i++) {
-    //     if (isUselessThread(typesCollection[i])) continue;
-
-    //     console.log(typesCollection[i].children[0].data);
-    // }
-};
-
-const bypass = () => {
-    const data = fs.readFileSync(__dirname + '/../lol.html', 'utf8');
-    getMarkDetails(cheerio.load(data));
-};
-
-const isUselessThread = ($: CheerioElement): Boolean => {
-    if ($.data === '\n\n\t\t\t\t' || $.data === '\n\t\t\t\t\t' || $ === undefined) {
-        console.log('-------rejected-------')
-        console.log($);
-        return true;
-    }
-
-    console.log('-------allowed-------');
-    console.log($);
-    return false;
-};
-
-scrape();
+scrape('############', '########', 2).then(console.log);
