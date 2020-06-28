@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as puppet from 'puppeteer';
 import {Tabletojson} from 'tabletojson';
+import {SemesterMarkSheet, Student, Scrapper} from './interfaces';
 
 const cleanCurdeData = (json: any[]): SemesterMarkSheet => {
     let cleanData: SemesterMarkSheet = { 

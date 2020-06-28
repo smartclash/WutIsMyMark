@@ -1,14 +1,14 @@
 {
-  "name": "kcgburner",
+  "name": "wutismymark",
   "version": "1.0.0",
-  "description": "A simple webapp that scrapes data from KCG Student login and visualizes it",
-  "main": "dist/App.js",
+  "description": "A simple data scrapper from KCG Student login webpage",
+  "main": "dist/index.js",
   "author": "xXAlphaManXx",
   "license": "MIT",
   "private": false,
   "dependencies": {
     "lodash": "^4.17.15",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^4.0.1",
     "tabletojson": "^2.0.4"
   },
   "devDependencies": {
@@ -17,8 +17,9 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -w -p tsconfig.json"
   },
-  "types": "index.d.ts"
+  "types": "dist/index.d.ts"
 }

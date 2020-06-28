@@ -4,13 +4,13 @@ interface Subject extends Object {
     marks: string[];
 }
 
-interface SemesterMarkSheet extends Object {
+export interface SemesterMarkSheet extends Object {
     semester: string;
     headings: string[];
     subjects: Subject[];
 }
 
-interface Student extends Object {
+export interface Student extends Object {
     name: string;
     roll: string;
     year: string;
@@ -26,7 +26,7 @@ interface Student extends Object {
  * @param password The date of birth of the student
  * @param semester Number of the semester you want to get grades.
  */
-interface Scrapper {
+export interface Scrapper {
     (
         username: string,
         password: string,
