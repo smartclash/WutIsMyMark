@@ -44,11 +44,6 @@ const getMarkDetails = (json: any[]): SemesterMarkSheet => {
     return cleanCurdeData(json);
 };
 
-// const mockGetData = () => {
-//     const data = fs.readFileSync(join(__dirname, '../data.json')).toString();
-//     getMarkDetails(JSON.parse(data));
-// };
-
 const scrape: Scrapper = async (username, password, semester) => {
     try {
         const browser = await puppet.launch();
@@ -100,3 +95,4 @@ const scrape: Scrapper = async (username, password, semester) => {
 };
 
 scrape('311019101017', '07122001', 2).then(console.log).catch(console.error);
+export default scrape;
