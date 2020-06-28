@@ -1,6 +1,8 @@
 # WutIsMyMark - WIMM
 ***A simple data scrapper from KCG Student login webpage***
 
+![NPM Description](https://nodei.co/npm/wutismymark.png)
+
 - [WutIsMyMark - WIMM](#wutismymark---wimm)
 - [Installation](#installation)
   - [Requirements](#requirements)
